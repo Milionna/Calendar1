@@ -34,7 +34,7 @@ h1{font-size:24px;margin:0}
 .cell.today{border:2px solid var(--ac)}.cell.sel{background:var(--lt)}
 .pill{font-style:normal;font-size:10px;line-height:1.3;border-radius:6px;padding:0 3px;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#0f172a}
 .o-N{background:var(--n)}.o-I{background:var(--i)}.o-B{background:var(--b)}
-.leg{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--mut);margin:10px 2px}
+.uh{font-weight:600;margin:12px 0 2px;color:var(--ach)}.leg{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--mut);margin:10px 2px}
 .leg i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:4px;vertical-align:-1px}
 .card{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:14px;margin-top:12px;border:1px solid rgba(59,130,246,.1)}
 .ev{display:block;width:100%;text-align:left;border:0;border-left:6px solid;border-radius:10px;background:var(--lt);padding:9px 10px;margin-top:8px;cursor:pointer}
@@ -67,6 +67,11 @@ let wl=ld('wl',{}),ev=ld('ev',[]);const FULL=7;const now=new Date();
 let Y=now.getFullYear(),M=now.getMonth(),tab='w',sel=iso(now);
 const app=document.getElementById('app'),md=document.getElementById('md');
 const evs=k=>ev.filter(e=>e.d===k).sort((a,b)=>(a.ad?'00':a.s||'99').localeCompare(b.ad?'00':b.s||'99'));
+function upc(){const nw=new Date(),tk=iso(nw),tm=iso(new Date(nw.getTime()+864e5)),hm=p2(nw.getHours())+':'+p2(nw.getMinutes()),key=e=>e.d+(e.ad?'00:00':e.s||'99:99');
+ const up=ev.filter(e=>e.d>tk||(e.d===tk&&(e.ad||!(e.e||e.s)||(e.e||e.s)>=hm))).sort((a,b)=>key(a).localeCompare(key(b)));let h='',last='';
+ up.forEach(e=>{if(e.d!==last){last=e.d;h+=`<div class="uh">${e.d===tk?'Сегодня · ':e.d===tm?'Завтра · ':''}${fmt(e.d)}</div>`}
+  h+=`<button class="ev o-${e.o}" data-e="${e.id}"><b>${e.ad?'Весь день':(e.s||'')+(e.e?'–'+e.e:'')}</b> ${esc(e.t)}${e.r?' 🔔':''}<br><small>${OW[e.o]}${e.n?' · '+esc(e.n):''}</small></button>`});
+ return `<div class="card"><b>🔔 Ближайшие события</b>${h||'<p style="color:var(--mut);margin:8px 0 0">Впереди ничего не запланировано</p>'}</div>`}
 function render(){
  const first=(new Date(Y,M,1).getDay()+6)%7,n=new Date(Y,M+1,0).getDate(),td=iso(new Date());
  let g=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(x=>`<div class="wd">${x}</div>`).join('')+'<div></div>'.repeat(first);
@@ -80,7 +85,7 @@ function render(){
  else{const es=evs(sel);low=`<div class="card"><b>${fmt(sel)}</b>${es.length?es.map(e=>`<button class="ev o-${e.o}" data-e="${e.id}"><b>${e.ad?'Весь день':(e.s||'')+(e.e?'–'+e.e:'')}</b> ${esc(e.t)}${e.r?' 🔔':''}<br><small>${OW[e.o]}${e.n?' · '+esc(e.n):''}</small></button>`).join(''):'<p style="color:var(--mut);margin:8px 0 0">Событий нет</p>'}</div><button id="fab" data-a="add">+</button>`}
  app.innerHTML=`<div class="top"><h1>${tab==='w'?'Работа И':'Общий календарь'}</h1><button class="ib" data-a="today">Сегодня</button></div>
  <div class="tabs"><button data-t="w" class="${tab==='w'?'on':''}">Работа И</button><button data-t="s" class="${tab==='s'?'on':''}">Общий календарь сит</button></div>
- <div class="nav"><button class="ib" data-a="pv">‹</button><b>${MN[M]} ${Y}</b><button class="ib" data-a="nx">›</button></div><div class="grid">${g}</div>${leg}${low}`}
+ <div class="nav"><button class="ib" data-a="pv">‹</button><b>${MN[M]} ${Y}</b><button class="ib" data-a="nx">›</button></div><div class="grid">${g}</div>${leg}${low}${tab==='s'?upc():''}`}
 function openM(h){md.innerHTML='<div class="ov"><div class="sheet">'+h+'</div></div>'}
 const closeM=()=>{md.innerHTML=''};
 function workModal(k){const r=wl[k]||{s:'F'};
