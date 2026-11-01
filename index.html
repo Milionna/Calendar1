@@ -56,14 +56,14 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:#3b82f6;box-sh
 <div id="md"></div>
 <script>
 const MN=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-const ST={F:['Полный рабочий','s-f'],P:['Неполный','s-p'],W:['Выходной','s-w'],O:['Отгул / больничный','s-o']};
+const ST={F:['Полный (7 ч)','s-f'],P:['Неполный','s-p'],W:['Выходной','s-w'],O:['Отгул / больничный','s-o']};
 const OW={N:'🟢 Настя',I:'🔵 Илья',B:'🟣 Вместе'};
 const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const p2=n=>String(n).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=k=>{const[a,b,c]=k.split('-');return +c+' '+MN[b-1].toLowerCase().replace(/ь$/,'я').replace(/т$/,'та').replace(/й$/,'я')+' '+a};
-let wl=ld('wl',{}),ev=ld('ev',[]);const now=new Date();
+let wl=ld('wl',{}),ev=ld('ev',[]);const FULL=7;const now=new Date();
 let Y=now.getFullYear(),M=now.getMonth(),tab='w',sel=iso(now);
 const app=document.getElementById('app'),md=document.getElementById('md');
 const evs=k=>ev.filter(e=>e.d===k).sort((a,b)=>(a.ad?'00':a.s||'99').localeCompare(b.ad?'00':b.s||'99'));
@@ -76,7 +76,7 @@ function render(){
   if(k===td)c+=' today';g+=`<button class="${c}" data-d="${k}">${h}</button>`}
  const leg=tab==='w'?`<div class="leg"><span><i style="background:var(--f)"></i>Полный</span><span><i style="background:var(--p)"></i>Неполный</span><span><i style="background:var(--w)"></i>Выходной</span><span><i style="background:var(--o)"></i>Отгул / больничный</span></div>`:`<div class="leg"><span><i style="background:var(--n)"></i>Настя</span><span><i style="background:var(--i)"></i>Илья</span><span><i style="background:var(--b)"></i>Вместе</span></div>`;
  let low='';
- if(tab==='w'){let t=0,dd=0;for(const k in wl)if(k.startsWith(Y+'-'+p2(M+1))){const r=wl[k];if(r.s==='F'){dd++;t+=8}else if(r.s==='P'){dd++;t+=+r.h||0}}low=`<div class="card">Отмечено рабочих дней: <b>${dd}</b>. Часов (полный день = 8): <b>${t}</b></div>`}
+ if(tab==='w'){let t=0,dd=0;for(const k in wl)if(k.startsWith(Y+'-'+p2(M+1))){const r=wl[k];if(r.s==='F'){dd++;t+=FULL}else if(r.s==='P'){dd++;t+=+r.h||0}}low=`<div class="card">Отмечено рабочих дней: <b>${dd}</b>. Часов (полный день = ${FULL}): <b>${t}</b></div>`}
  else{const es=evs(sel);low=`<div class="card"><b>${fmt(sel)}</b>${es.length?es.map(e=>`<button class="ev o-${e.o}" data-e="${e.id}"><b>${e.ad?'Весь день':(e.s||'')+(e.e?'–'+e.e:'')}</b> ${esc(e.t)}${e.r?' 🔔':''}<br><small>${OW[e.o]}${e.n?' · '+esc(e.n):''}</small></button>`).join(''):'<p style="color:var(--mut);margin:8px 0 0">Событий нет</p>'}</div><button id="fab" data-a="add">+</button>`}
  app.innerHTML=`<div class="top"><h1>${tab==='w'?'Работа И':'Общий календарь'}</h1><button class="ib" data-a="today">Сегодня</button></div>
  <div class="tabs"><button data-t="w" class="${tab==='w'?'on':''}">Работа И</button><button data-t="s" class="${tab==='s'?'on':''}">Общий календарь сит</button></div>
