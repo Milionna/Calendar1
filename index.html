@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>Календарь: Работа И и общий</title>
+<title>Календарь</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!-- iOS PWA поддержка -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -57,7 +57,7 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:#3b82f6;box-sh
 <script>
 const MN=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 const ST={F:['Полный (7 ч)','s-f'],P:['Неполный','s-p'],W:['Выходной','s-w'],O:['Отгул / больничный','s-o']};
-const OW={N:'🟢 Настя',I:'🔵 Илья',B:'🟣 Вместе'};
+const OW={N:'🟢 Она',I:'🔵 Он',B:'🟣 Вместе'};
 const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const p2=n=>String(n).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
@@ -79,12 +79,12 @@ function render(){
   if(tab==='w'){const r=wl[k],s=r?r.s:(wd>4?'W':'');if(s)c+=' '+ST[s][1];if(r&&r.s==='P')h+=`<small>${r.h} ч</small>`;if(r&&r.r)h+='<small>📝</small>'}
   else{const es=evs(k);h+=es.slice(0,2).map(e=>`<i class="pill o-${e.o}" data-e="${e.id}">${esc(e.t)}</i>`).join('')+(es.length>2?`<small>+${es.length-2}</small>`:'');if(k===sel)c+=' sel'}
   if(k===td)c+=' today';g+=`<button class="${c}" data-d="${k}">${h}</button>`}
- const leg=tab==='w'?`<div class="leg"><span><i style="background:var(--f)"></i>Полный</span><span><i style="background:var(--p)"></i>Неполный</span><span><i style="background:var(--w)"></i>Выходной</span><span><i style="background:var(--o)"></i>Отгул / больничный</span></div>`:`<div class="leg"><span><i style="background:var(--n)"></i>Настя</span><span><i style="background:var(--i)"></i>Илья</span><span><i style="background:var(--b)"></i>Вместе</span></div>`;
+ const leg=tab==='w'?`<div class="leg"><span><i style="background:var(--f)"></i>Полный</span><span><i style="background:var(--p)"></i>Неполный</span><span><i style="background:var(--w)"></i>Выходной</span><span><i style="background:var(--o)"></i>Отгул / больничный</span></div>`:`<div class="leg"><span><i style="background:var(--n)"></i>Она</span><span><i style="background:var(--i)"></i>Он</span><span><i style="background:var(--b)"></i>Вместе</span></div>`;
  let low='';
  if(tab==='w'){let t=0,dd=0;for(const k in wl)if(k.startsWith(Y+'-'+p2(M+1))){const r=wl[k];if(r.s==='F'){dd++;t+=FULL}else if(r.s==='P'){dd++;t+=+r.h||0}}low=`<div class="card">Отмечено рабочих дней: <b>${dd}</b>. Часов (полный день = ${FULL}): <b>${t}</b></div>`}
  else{const es=evs(sel);low=`<div class="card"><b>${fmt(sel)}</b>${es.length?es.map(e=>`<button class="ev o-${e.o}" data-e="${e.id}"><b>${e.ad?'Весь день':(e.s||'')+(e.e?'–'+e.e:'')}</b> ${esc(e.t)}${e.r?' 🔔':''}<br><small>${OW[e.o]}${e.n?' · '+esc(e.n):''}</small></button>`).join(''):'<p style="color:var(--mut);margin:8px 0 0">Событий нет</p>'}</div><button id="fab" data-a="add">+</button>`}
- app.innerHTML=`<div class="top"><h1>${tab==='w'?'Работа И':'Общий календарь'}</h1><button class="ib" data-a="today">Сегодня</button></div>
- <div class="tabs"><button data-t="w" class="${tab==='w'?'on':''}">Работа И</button><button data-t="s" class="${tab==='s'?'on':''}">Общий календарь сит</button></div>
+ app.innerHTML=`<div class="top"><h1>${tab==='w'?'Рабочий календарь':'Общий календарь'}</h1><button class="ib" data-a="today">Сегодня</button></div>
+ <div class="tabs"><button data-t="w" class="${tab==='w'?'on':''}">Рабочий календарь</button><button data-t="s" class="${tab==='s'?'on':''}">Общий календарь сит</button></div>
  <div class="nav"><button class="ib" data-a="pv">‹</button><b>${MN[M]} ${Y}</b><button class="ib" data-a="nx">›</button></div><div class="grid">${g}</div>${leg}${low}${tab==='s'?upc():''}`}
 function openM(h){md.innerHTML='<div class="ov"><div class="sheet">'+h+'</div></div>'}
 const closeM=()=>{md.innerHTML=''};
